@@ -54,7 +54,7 @@ class App {
     this.express.use(express.urlencoded({ extended: true })); // para envia arquivos e fotos
     this.express.use(
       '/files',
-      express.static(path.resolve(__dirname, '..', 'tmp', 'uploads', 'resizer')),
+      express.static(path.resolve(__dirname, '..', 'tmp', 'uploads', 'resized')),
     );
   }
 
