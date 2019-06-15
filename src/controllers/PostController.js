@@ -13,13 +13,14 @@ module.exports = {
     const {
       author, place, description, hashtags,
     } = req.body;
+
     const { filename: image } = req.file;
 
     await sharp(req.file.path)
       .resize(500)
       .jpeg({ quality: 70 })
       .toFile(path.resolve(req.file.destination, 'resized', image));
-
+    // remove os arquivo da pasta, arquivos velhos
     fs.unlinkSync(req.file.path);
 
     const post = await Post.create({
@@ -29,8 +30,9 @@ module.exports = {
       hashtags,
       image,
     });
+
     req.io.emit('post', post);
-    // req.io.emit('post', post);
+    console.log('Criou o post');
     return res.json(post);
   },
 };

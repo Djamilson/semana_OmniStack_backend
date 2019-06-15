@@ -4,8 +4,10 @@ const express = require('express');
 const mongoose = require('mongoose');
 const cors = require('cors');
 const path = require('path');
+const morgan = require('morgan');
 
 const databaseConfig = require('./config/database');
+const server = require('http').Server(this.express);
 
 class App {
   constructor() {
@@ -13,23 +15,31 @@ class App {
 
     this.middlewares_cors();
 
-    const server = require('http').Server(this.express);
     this.io = require('socket.io')(server);
 
     this.isDev = process.env.NODE_ENV !== 'production';
 
     this.connectSocket();
+
     this.database();
     this.middlewares();
     this.routes();
   }
 
   connectSocket() {
+    this.express.use((req, res, next) => {
+      req.io = this.io;
+
+      return next();
+    });
+
+    /*
     this.io.on('connection', (socket) => {
+      console.log('Successfully connected!');
       socket.on('connectRoom', (box) => {
         socket.join(box);
       });
-    });
+    }); */
   }
 
   database() {
@@ -52,6 +62,7 @@ class App {
     });
     this.express.use(express.json());
     this.express.use(express.urlencoded({ extended: true })); // para envia arquivos e fotos
+    this.express.use(morgan('dev'));
     this.express.use(
       '/files',
       express.static(path.resolve(__dirname, '..', 'tmp', 'uploads', 'resized')),

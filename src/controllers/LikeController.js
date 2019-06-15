@@ -7,9 +7,12 @@ module.exports = {
     post.likes += 1;
     await post.save();
 
+
+    console.log('Deu like');
     req.io.emit('like', post);
 
-    // req.io.emit('like', post);
+    console.log('Deu like', req.io);
+    // req.io.sockets.in(req.params.id).emit('like', post);
     return res.json(post);
   },
 };
